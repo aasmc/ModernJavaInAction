@@ -21,6 +21,7 @@ public class DateTimeExamples {
         useLocalDate();
         useTemporalAdjuster();
         useDateFormatter();
+        useZonedDateTime();
     }
 
     private static void useOldDate() {
@@ -43,6 +44,11 @@ public class DateTimeExamples {
         boolean leap = date.isLeapYear();
         System.out.println(date);
 
+        LocalDate dt1 = LocalDate.of(2017, 9, 21);
+        LocalDate dt2 = dt1.withYear(2011);
+        LocalDate dt3 = dt2.withDayOfMonth(25);
+        LocalDate dt4 = dt3.with(ChronoField.MONTH_OF_YEAR, 2);
+
         int y = date.get(ChronoField.YEAR);
         int m = date.get(ChronoField.MONTH_OF_YEAR);
         int d = date.get(ChronoField.DAY_OF_MONTH);
@@ -53,16 +59,16 @@ public class DateTimeExamples {
         int second = time.getSecond();
         System.out.println(time);
 
-        LocalDateTime dt1 = LocalDateTime.of(2014, Month.MARCH, 18, 13, 45, 20);
-        LocalDateTime dt2 = LocalDateTime.of(date, time);
-        LocalDateTime dt3 = date.atTime(13, 45, 20);
-        LocalDateTime dt4 = date.atTime(time);
-        LocalDateTime dt5 = time.atDate(date);
+        LocalDateTime dtt1 = LocalDateTime.of(2014, Month.MARCH, 18, 13, 45, 20);
+        LocalDateTime dtt2 = LocalDateTime.of(date, time);
+        LocalDateTime dtt3 = date.atTime(13, 45, 20);
+        LocalDateTime dtt4 = date.atTime(time);
+        LocalDateTime dtt5 = time.atDate(date);
         System.out.println(dt1);
 
-        LocalDate date1 = dt1.toLocalDate();
+        LocalDate date1 = dtt1.toLocalDate();
         System.out.println(date1);
-        LocalTime time1 = dt1.toLocalTime();
+        LocalTime time1 = dtt1.toLocalTime();
         System.out.println(time1);
 
         Instant instant = Instant.ofEpochSecond(44 * 365 * 86400);
@@ -72,6 +78,17 @@ public class DateTimeExamples {
         Duration d2 = Duration.between(instant, now);
         System.out.println(d1.getSeconds());
         System.out.println(d2.getSeconds());
+
+        Period p1 = Period.between(LocalDate.of(2017, 9, 11),
+                LocalDate.of(2017, 9, 21));
+
+        Period p2 = Period.ofDays(10);
+        Period p3 = Period.ofWeeks(3);
+        Period p4 = Period.of(2, 6, 1);
+        System.out.println(p1);
+        System.out.println(p2);
+        System.out.println(p3);
+        System.out.println(p4);
 
         Duration threeMinutes = Duration.of(3, ChronoUnit.MINUTES);
         System.out.println(threeMinutes);
@@ -112,8 +129,7 @@ public class DateTimeExamples {
             int dayToAdd = 1;
             if (dow == DayOfWeek.FRIDAY) {
                 dayToAdd = 3;
-            }
-            if (dow == DayOfWeek.SATURDAY) {
+            } else if (dow == DayOfWeek.SATURDAY) {
                 dayToAdd = 2;
             }
             return temporal.plus(dayToAdd, ChronoUnit.DAYS);
@@ -126,6 +142,7 @@ public class DateTimeExamples {
         DateTimeFormatter italianFormatter = DateTimeFormatter.ofPattern("d. MMMM yyyy", Locale.ITALIAN);
 
         System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        System.out.println(date.format(DateTimeFormatter.BASIC_ISO_DATE));
         System.out.println(date.format(formatter));
         System.out.println(date.format(italianFormatter));
 
@@ -139,6 +156,22 @@ public class DateTimeExamples {
                 .toFormatter(Locale.ITALIAN);
 
         System.out.println(date.format(complexFormatter));
+        String formattedDate = date.format(italianFormatter);
+        LocalDate date2 = LocalDate.parse(formattedDate, italianFormatter);
+        System.out.println(date2);
+    }
+
+    private static void useZonedDateTime() {
+        ZoneId romeZone = ZoneId.of("Europe/Rome");
+        LocalDate date = LocalDate.of(2014, Month.MARCH, 18);
+        ZonedDateTime zdt = date.atStartOfDay(romeZone);
+        LocalDateTime dateTime = LocalDateTime.of(2014, Month.MARCH, 18, 13, 45);
+        ZonedDateTime zdt2 = dateTime.atZone(romeZone);
+        Instant instant = Instant.now();
+        ZonedDateTime zdt3 = instant.atZone(romeZone);
+        System.out.println(zdt);
+        System.out.println(zdt2);
+        System.out.println(zdt3);
     }
 }
 
